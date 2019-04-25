@@ -6,6 +6,8 @@ require 'openssl'
 module Koala
   module Facebook
     class API
+      DEBUG_HEADERS = Koala::Facebook::GraphErrorChecker::DEBUG_HEADERS
+
       # Creates a new API client.
       # @param [String] access_token access token
       # @param [String] app_secret app secret, for tying your access tokens to your app secret
@@ -108,7 +110,10 @@ module Koala
         result = Koala.make_request(path, args, verb, options)
 
         if result.status.to_i >= 500
-          raise Koala::Facebook::ServerError.new(result.status.to_i, result.body)
+          error_info = DEBUG_HEADERS.each_with_object({}) do |header_name, hsh|
+            hsh[header_name] = result.headers[header_name] if result.headers[header_name]
+          end
+          raise Koala::Facebook::ServerError.new(result.status.to_i, result.body, error_info)
         end
 
         result
