@@ -15,6 +15,7 @@ module Koala
     class APIError < ::Koala::KoalaError
       attr_accessor :http_status,
                     :response_body,
+                    :response_headers,
                     :fb_error_type,
                     :fb_error_code,
                     :fb_error_subcode,
@@ -37,13 +38,14 @@ module Koala
       #                   the error info from the response_body
       #
       # @return the newly created APIError
-      def initialize(http_status, response_body, error_info = nil)
+      def initialize(http_status, response_body, error_info = nil, response_headers = nil)
         if response_body
           self.response_body = response_body.strip
         else
           self.response_body = ''
         end
         self.http_status = http_status
+        self.response_headers = response_headers
 
         if error_info && error_info.is_a?(String)
           message = error_info
