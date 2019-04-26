@@ -21,7 +21,7 @@ module Koala
 
       def error_if_appropriate
         if http_status >= 400
-          error_class.new(http_status, body, error_info)
+          error_class.new(http_status, body, error_info, headers)
         end
       end
 
